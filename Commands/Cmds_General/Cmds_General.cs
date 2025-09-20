@@ -1,37 +1,32 @@
-﻿using Autodesk.Revit.Attributes;
+﻿// Autodesk
+using Autodesk.Revit.Attributes;
 using Autodesk.Revit.UI;
-using Nice3point.Revit.Toolkit.External;
 
-namespace RevitAddIn.Commands
+// Associate with general commands
+namespace RevitAddIn.Commands.Cmds_General
 {
     /// <summary>
-    ///     External command entry point
+    ///     Example Command
     /// </summary>
-    [UsedImplicitly]
+    //[UsedImplicitly]
     [Transaction(TransactionMode.Manual)]
-    public class StartupCommand : ExternalCommand
+    public class Cmd_Test: IExternalCommand
     {
-        public override void Execute()
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            TaskDialog.Show(Document.Title, "Revit Add-In is started!");
+            // Collect the documents
+            UIApplication uiApp = commandData.Application;
+            UIDocument uiDoc = uiApp.ActiveUIDocument;
+            Document doc = uiDoc.Document;
 
-            var titleBlockId = ElementId.InvalidElementId;
+            // Code logic here
+            TaskDialog.Show("It is working", doc.Title);
 
-            try
-            {
-                var sheet = ViewSheet.Create(Document, titleBlockId);
-            }
-            catch (Autodesk.Revit.Exceptions.ArgumentException ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("Sheet could not be made\n");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-           
-
+            // Final return
+            return Result.Succeeded;
         }
+
+       
     }
+
 }

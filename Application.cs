@@ -1,26 +1,42 @@
-﻿using Nice3point.Revit.Toolkit.External;
-using RevitAddIn.Commands;
+﻿// System
+using System.Reflection;
+// Autodesk
+using Autodesk.Revit.UI;
+// RevitAddIn
+using ribUtil = RevitAddIn.Utilities.Ribbon_Utils;
 
+// This application belongs to the root namespace
 namespace RevitAddIn
 {
-    /// <summary>
-    ///     Application entry point
-    /// </summary>
-    [UsedImplicitly]
-    public class Application : ExternalApplication
+    // Implementing the interface for applications
+    public class Application: IExternalApplication
     {
-        public override void OnStartup()
+        // This will run on Startup
+        public Result OnStartup(UIControlledApplication uiCtlApp)
         {
-            CreateRibbon();
+            // Collect the controlled application
+            var ctlApp = uiCtlApp.ControlledApplication;
+            var assembly = Assembly.GetExecutingAssembly();
+            var assemblyPath = assembly.Location;
+
+            string tabName = "RevitAddIn";
+
+            // Add a new ribbon tab
+            ribUtil.AddRibbonTab(uiCtlApp, tabName);
+
+            // Add panels to the tab
+            var panelGeneral = ribUtil.AddRibbonPanelToTab(uiCtlApp, tabName, "General");
+
+            // Add buttons to the panel
+            var buttonTest = ribUtil.AddPushButtonToPanel(panelGeneral, "Testing", "RevitAddIn.Commands.Cmds_General.Cmd_Test", "_testing", assemblyPath);
+
+            return Result.Succeeded;
         }
 
-        private void CreateRibbon()
+        // This will run on Shutdown
+        public Result OnShutdown(UIControlledApplication uiCtlApp)
         {
-            var panel = Application.CreatePanel("Commands", "RevitAddIn");
-
-            panel.AddPushButton<StartupCommand>("Execute")
-                .SetImage("/RevitAddIn;component/Resources/Icons/RibbonIcon16.png")
-                .SetLargeImage("/RevitAddIn;component/Resources/Icons/RibbonIcon32.png");
+            return Result.Succeeded;
         }
     }
 }
