@@ -74,8 +74,4 @@
         <Resource Include="Resources\Icons\RibbonIcon32.png" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="General\" />
-    </ItemGroup>
-
 </Project>
