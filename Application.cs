@@ -3,8 +3,6 @@ using System.Reflection;
 // Autodesk
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
-using RevitAddIn.General;
-
 // RevitAddIn
 using ribUtil = RevitAddIn.Utilities.Ribbon_Utils;
 
@@ -14,14 +12,20 @@ namespace RevitAddIn
     // Implementing the interface for applications
     public class Application: IExternalApplication
     {
+        #region Properties
+
         // Make a private uiCtlApp
         private static UIControlledApplication _uiCtlApp;
+
+        #endregion
 
         // This will run on Startup
         public Result OnStartup(UIControlledApplication uiCtlApp)
         {
+
             #region Globals registration
-            // Store the uiCtlApp in the private variable
+
+            // Store _uiCtlApp, register on idling
             _uiCtlApp = uiCtlApp;
 
             try
@@ -34,16 +38,17 @@ namespace RevitAddIn
                 Globals.UsernameRevit = null;
             }
 
-            // Globals
+            // Registering globals
             Globals.RegisterProperties(uiCtlApp);
 
-            // Collect the controlled application -> NOW IN GLOBALS
+            #endregion
+
+            // Collect the controlled application
             //var ctlApp = uiCtlApp.ControlledApplication;
             //var assembly = Assembly.GetExecutingAssembly();
             //var assemblyPath = assembly.Location;
-            //string tabName = "RevitAddIn";
 
-            #endregion
+            //string tabName = "RevitAddIn";
 
             #region Ribbon setup
 
@@ -55,30 +60,38 @@ namespace RevitAddIn
 
             // Add buttons to the panel
             var buttonTest = ribUtil.AddPushButtonToPanel(panelGeneral, "Testing", "RevitAddIn.Commands.Cmds_General.Cmd_Test", "_testing", Globals.AssemblyPath);
+            var buttonAbout = ribUtil.AddPushButtonToPanel(panelGeneral, "About", "RevitAddIn.Commands.Cmds_General.Cmd_About", "_about", Globals.AssemblyPath);
 
             #endregion
 
-            // Final return
             return Result.Succeeded;
         }
 
         #region On shutdown method
 
-        // This will run on Shutdown
+        // This will run on shutdown
         public Result OnShutdown(UIControlledApplication uiCtlApp)
         {
+            // Cleanup code logic
+
+            // Final return
             return Result.Succeeded;
         }
 
         #endregion
 
         #region Use idling to register UiApp
-        // On idling, register UiApp/username
+
+        /// <summary>
+        /// Registers the UiApp and Revit username globally.
+        /// </summary>
+        /// <param name="sender">Sender of the Idling event.</param>
+        /// <param name="e">Idling event arguments.</param>
         private static void RegisterUiApp(object sender, IdlingEventArgs e)
         {
             _uiCtlApp.Idling -= RegisterUiApp;
 
-            if (sender is UIApplication uiApp )
+            if (sender is UIApplication uiApp)
             {
                 Globals.UiApp = uiApp;
                 Globals.UsernameRevit = uiApp.Application.Username;

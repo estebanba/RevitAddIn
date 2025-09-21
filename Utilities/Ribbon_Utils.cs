@@ -1,10 +1,10 @@
-﻿using Autodesk.Revit.UI;
+﻿// System 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+// Autodesk
+using Autodesk.Revit.UI;
 
 namespace RevitAddIn.Utilities
 {
@@ -30,7 +30,7 @@ namespace RevitAddIn.Utilities
         {
             try
             {
-                return uiCtlApp.CreateRibbonPanel(tabName, panelName);
+                uiCtlApp.CreateRibbonPanel(tabName, panelName);
                
             }
             catch (Exception ex)
@@ -39,11 +39,11 @@ namespace RevitAddIn.Utilities
                 return null;
             }
 
-            GetRibbonPanelByName(uiCtlApp, tabName, panelName); 
+            return GetRibbonPanelByName(uiCtlApp, tabName, panelName); 
         }
 
         // Method to retrieve a ribbon panel by its name from a specified tab
-        public static RibbonPanel GetRibbonPanelByName(UIControlledApplication uiCtlApp, string tabName, string panelName)
+        public static RibbonPanel? GetRibbonPanelByName(UIControlledApplication uiCtlApp, string tabName, string panelName)
         {
             var panels = uiCtlApp.GetRibbonPanels(tabName);
 
@@ -70,7 +70,7 @@ namespace RevitAddIn.Utilities
         /// <returns></returns>
         public static PushButton AddPushButtonToPanel(RibbonPanel panel, string buttonName, string className, string internalName, string assemblyPath)
         {
-            if (panel == null)
+            if (panel is null)
             {
                 Debug.WriteLine($"Error: Could not create {buttonName}. The provided RibbonPanel is null.");
                 return null;
